@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Accounts   -->
+    <bean id="account1" class="models.Account">
+        <property name="accountNumber" value="0000KZ"></property>
+        <property name="balance" value="1000.0"></property>
+    </bean>
+
+    <bean id="account2" class="models.Account">
+        <property name="accountNumber" value="1111KZ"></property>
+        <property name="balance" value="1000.0"></property>
+    </bean>
+
+    <bean id="account3" class="models.Account">
+        <property name="accountNumber" value="2222KZ"></property>
+        <property name="balance" value="1000.0"></property>
+    </bean>
+
+
+    <!-- Cards -->
+    <bean id="card1" class="models.Card">
+        <constructor-arg value="0000111122223333"></constructor-arg>
+        <constructor-arg value="1111"></constructor-arg>
+        <constructor-arg ref="account1"></constructor-arg>
+    </bean>
+
+    <bean id="card2" class="models.Card">
+        <constructor-arg value="1111222233334444"></constructor-arg>
+        <constructor-arg value="2222"></constructor-arg>
+        <constructor-arg ref="account2"></constructor-arg>
+    </bean>
+
+    <bean id="card3" class="models.Card">
+        <constructor-arg value="0000111122223333"></constructor-arg>
+        <constructor-arg value="3333"></constructor-arg>
+        <constructor-arg ref="account3"></constructor-arg>
+    </bean>
+
+
+    <!-- Clients -->
+    <bean id="client1" class="models.Client">
+        <property name="name" value="Yerbolat"></property>
+        <property name="card" ref="card1"></property>
+    </bean>
+
+    <bean id="client2" class="models.Client">
+        <constructor-arg value="Abay"></constructor-arg>
+        <constructor-arg ref="card2"></constructor-arg>
+    </bean>
+
+    <bean id="client3" class="models.Client">
+        <constructor-arg value="Tom"></constructor-arg>
+        <constructor-arg ref="card3"></constructor-arg>
+    </bean>
+
+
+    <!-- Bank -->
+    <bean id="bank" class="models.Bank">
+        <property name="accounts">
+            <list>
+                <ref bean="account1"></ref>
+                <ref bean="account2"></ref>
+                <ref bean="account3"></ref>
+            </list>
+        </property>
+
+        <property name="cards">
+            <list>
+                <ref bean="card1"></ref>
+                <ref bean="card2"></ref>
+                <ref bean="card3"></ref>
+            </list>
+        </property>
+
+        <property name="users">
+            <list>
+                <ref bean="client1"></ref>
+                <ref bean="client2"></ref>
+                <ref bean="client3"></ref>
+            </list>
+        </property>
+    </bean>
+
+    <!-- ATM -->
+    <bean id="atm" class="models.ATM">
+        <constructor-arg ref="bank"></constructor-arg>
+    </bean>
+
+
+
+</beans>
