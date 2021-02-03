@@ -13,7 +13,8 @@ public class DemoAtmApplication {
         SpringApplication.run(DemoAtmApplication.class, args);
 
         ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
-
+        ATM atm = context.getBean("atm", ATM.class);
+        atm.run();
 //        Account account =context.getBean("account1", Account.class);
 //        System.out.println(account);
 //        account.setBalance(1111.0);
@@ -28,10 +29,7 @@ public class DemoAtmApplication {
 //        Bank bank = context.getBean("bank", Bank.class);
 //        System.out.println(bank);
 //
-        ATM atm = context.getBean("atm", ATM.class);
 //        System.out.println(atm);
-
-        atm.run();
     }
 
 }

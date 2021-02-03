@@ -35,7 +35,7 @@
     </bean>
 
     <bean id="card3" class="models.Card">
-        <constructor-arg value="0000111122223333"></constructor-arg>
+        <constructor-arg value="2222333344445555"></constructor-arg>
         <constructor-arg value="3333"></constructor-arg>
         <constructor-arg ref="account3"></constructor-arg>
     </bean>
@@ -89,7 +89,4 @@
     <bean id="atm" class="models.ATM">
         <constructor-arg ref="bank"></constructor-arg>
     </bean>
-
-
-
 </beans>

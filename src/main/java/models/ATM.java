@@ -32,7 +32,7 @@ public class ATM {
         }
     }
 
-    public void wi() {
+    public void withdraw() {
         System.out.print("Input amount: ");
         double amount = sc.nextDouble();
 
@@ -41,6 +41,37 @@ public class ATM {
         } else {
             System.out.println("Error, you don't have enough money in your account!");
         }
+    }
+
+    public void topUp() {
+        System.out.print("Input amount: ");
+        double amount = sc.nextDouble();
+
+        if (amount > 0) {
+            if (bank.topUp(amount, currentCard.getCardNumber())) {
+                System.out.println("In progress.... \nDone!");
+            } else {
+                System.out.println("Error, try again!!!");
+            }
+        } else {
+            System.out.println("Error, enter a positive money!!!");
+        }
+    }
+
+    public void changePinCode() {
+        System.out.print("Input new pin code: ");
+        String pinCode = sc.next();
+        bank.changePinCode(currentCard, pinCode);
+        System.out.println("New pin code is set.");
+    }
+
+    public void showMenu() {
+        System.out.println("\n--- MENU ---");
+        System.out.println("enter 1 - check balance");
+        System.out.println("enter 2 - withdraw");
+        System.out.println("enter 3 - top up");
+        System.out.println("enter 4 - change pin code");
+        System.out.println("enter 0 - EXIT");
     }
 
     public void run() {
@@ -62,27 +93,13 @@ public class ATM {
                             System.out.println("You balance: " + bank.checkBalance(currentCard.getCardNumber()));
                             break;
                         case "2":
-                            wi();
+                            withdraw();
                             break;
                         case "3":
-                            System.out.print("Input amount: ");
-                            amount = sc.nextDouble();
-
-                            if (amount > 0) {
-                                if (bank.topUp(amount, currentCard.getCardNumber())) {
-                                    System.out.println("In progress.... \nDone!");
-                                } else {
-                                    System.out.println("Error, try again!!!");
-                                }
-                            } else {
-                                System.out.println("Error, enter a positive money!!!");
-                            }
+                            topUp();
                             break;
                         case "4":
-                            System.out.print("Input new pin code: ");
-                            String pinCode = sc.next();
-                            bank.changePinCode(currentCard, pinCode);
-                            System.out.println("New pin code is set.");
+                            changePinCode();
                             break;
                         case "0":
                             stop = true;
@@ -90,7 +107,6 @@ public class ATM {
                         default:
                             System.out.println("Invalid argument!");
                     }
-
                     accessStatus = false;
                 } else {
                     System.out.println("\nDo you want to perform the operation again?");
@@ -113,15 +129,6 @@ public class ATM {
                 }
             }
         }
-    }
-
-    public void showMenu() {
-        System.out.println("\n--- MENU ---");
-        System.out.println("enter 1 - check balance");
-        System.out.println("enter 2 - withdraw");
-        System.out.println("enter 3 - top up");
-        System.out.println("enter 4 - change pin code");
-        System.out.println("enter 0 - EXIT");
     }
 
     @Override
