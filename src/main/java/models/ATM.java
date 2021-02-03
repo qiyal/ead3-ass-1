@@ -5,11 +5,11 @@ import java.util.Scanner;
 public class ATM {
     private Card currentCard;
     private boolean accessStatus;
-    private Bank bank;
+    private BankService bankService;
     private Scanner sc;
 
-    public ATM(Bank bank) {
-        this.bank = bank;
+    public ATM(BankService bankService) {
+        this.bankService = bankService;
         this.currentCard = null;
         this.accessStatus = false;
         this.sc = new Scanner(System.in);
@@ -23,8 +23,8 @@ public class ATM {
         System.out.print("Input pin code: ");
         pinCode = sc.next();
 
-        if (bank.checkCardInfo(cardNumber, pinCode)) {
-            currentCard = bank.getCard(cardNumber);
+        if (((Bank)bankService).checkCardInfo(cardNumber, pinCode)) {
+            currentCard = ((Bank)bankService).getCard(cardNumber);
             accessStatus = true;
             System.out.println("Valid data.");
         } else {
@@ -36,7 +36,7 @@ public class ATM {
         System.out.print("Input amount: ");
         double amount = sc.nextDouble();
 
-        if (bank.withdraw(amount, currentCard.getCardNumber())) {
+        if (((Bank)bankService).withdraw(amount, currentCard.getCardNumber())) {
             System.out.println("In progress.... \nDon't forget to collect the money!");
         } else {
             System.out.println("Error, you don't have enough money in your account!");
@@ -48,7 +48,7 @@ public class ATM {
         double amount = sc.nextDouble();
 
         if (amount > 0) {
-            if (bank.topUp(amount, currentCard.getCardNumber())) {
+            if (((Bank)bankService).topUp(amount, currentCard.getCardNumber())) {
                 System.out.println("In progress.... \nDone!");
             } else {
                 System.out.println("Error, try again!!!");
@@ -61,7 +61,7 @@ public class ATM {
     public void changePinCode() {
         System.out.print("Input new pin code: ");
         String pinCode = sc.next();
-        bank.changePinCode(currentCard, pinCode);
+        ((Bank)bankService).changePinCode(currentCard, pinCode);
         System.out.println("New pin code is set.");
     }
 
@@ -90,7 +90,7 @@ public class ATM {
 
                     switch (chose) {
                         case "1":
-                            System.out.println("You balance: " + bank.checkBalance(currentCard.getCardNumber()));
+                            System.out.println("You balance: " + ((Bank)bankService).checkBalance(currentCard.getCardNumber()));
                             break;
                         case "2":
                             withdraw();
@@ -136,7 +136,7 @@ public class ATM {
         return "ATM{" +
                 "currentCard=" + currentCard +
                 ", accessStatus=" + accessStatus +
-                ", bank=" + bank +
+                ", bank=" + ((Bank)bankService) +
                 '}';
     }
 }
