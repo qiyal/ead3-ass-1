@@ -3,16 +3,16 @@ package models;
 import java.util.Scanner;
 
 public class ATM {
-    private Card currentCard;
+    private String currentCardNumber;
     private boolean accessStatus;
-    private BankService bankService;
+    private Bank bank;
     private Scanner sc;
 
-    public ATM(BankService bankService) {
-        this.bankService = bankService;
-        this.currentCard = null;
-        this.accessStatus = false;
-        this.sc = new Scanner(System.in);
+    public ATM() {}
+
+    public ATM(Bank bank) {
+        this.bank = bank;
+        sc = new Scanner(System.in);
     }
 
     public void logIn() {
@@ -23,9 +23,9 @@ public class ATM {
         System.out.print("Input pin code: ");
         pinCode = sc.next();
 
-        if (((Bank)bankService).checkCardInfo(cardNumber, pinCode)) {
-            currentCard = ((Bank)bankService).getCard(cardNumber);
+        if (bank.checkCard(cardNumber, pinCode)) {
             accessStatus = true;
+            currentCardNumber = cardNumber;
             System.out.println("Valid data.");
         } else {
             System.out.println("Error, invalid data!!!");
@@ -36,7 +36,7 @@ public class ATM {
         System.out.print("Input amount: ");
         double amount = sc.nextDouble();
 
-        if (((Bank)bankService).withdraw(amount, currentCard.getCardNumber())) {
+        if (bank.withdraw(amount, currentCardNumber)) {
             System.out.println("In progress.... \nDon't forget to collect the money!");
         } else {
             System.out.println("Error, you don't have enough money in your account!");
@@ -48,7 +48,7 @@ public class ATM {
         double amount = sc.nextDouble();
 
         if (amount > 0) {
-            if (((Bank)bankService).topUp(amount, currentCard.getCardNumber())) {
+            if (bank.topUp(amount, currentCardNumber)) {
                 System.out.println("In progress.... \nDone!");
             } else {
                 System.out.println("Error, try again!!!");
@@ -61,7 +61,7 @@ public class ATM {
     public void changePinCode() {
         System.out.print("Input new pin code: ");
         String pinCode = sc.next();
-        ((Bank)bankService).changePinCode(currentCard, pinCode);
+        bank.changePinCode(pinCode, currentCardNumber);
         System.out.println("New pin code is set.");
     }
 
@@ -79,7 +79,7 @@ public class ATM {
         boolean stop = false;
 
         while (!stop) {
-            if (currentCard == null) {
+            if (currentCardNumber == null) {
                 logIn();
             } else {
                 if (accessStatus) {
@@ -90,7 +90,7 @@ public class ATM {
 
                     switch (chose) {
                         case "1":
-                            System.out.println("You balance: " + ((Bank)bankService).checkBalance(currentCard.getCardNumber()));
+                            System.out.println("You balance: " + bank.checkBalance(currentCardNumber));
                             break;
                         case "2":
                             withdraw();
@@ -117,7 +117,7 @@ public class ATM {
                         System.out.print("Input pin code: ");
                         String pinCode = sc.next();
 
-                        if (pinCode.equals(currentCard.getPinCode())) {
+                        if (bank.checkCard(currentCardNumber, pinCode)) {
                             accessStatus = true;
                         } else {
                             System.out.println("Error, invalid pin code!!!");
@@ -129,14 +129,5 @@ public class ATM {
                 }
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        return "ATM{" +
-                "currentCard=" + currentCard +
-                ", accessStatus=" + accessStatus +
-                ", bank=" + ((Bank)bankService) +
-                '}';
     }
 }

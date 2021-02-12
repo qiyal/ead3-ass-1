@@ -1,104 +1,114 @@
 package models;
 
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Bank implements BankService {
-    private ArrayList<Account> accounts;
-    private ArrayList<Card> cards;
-    private ArrayList<Client> users;
+    DBConnection dbConnection;
 
     public Bank() {}
 
-    // Setters
-    public void setAccounts(ArrayList<Account> accounts) {
-        this.accounts = accounts;
+    public Bank(DBConnection dbConnection) {
+        this.dbConnection = dbConnection;
     }
 
-    public void setCards(ArrayList<Card> cards) {
-        this.cards = cards;
-    }
+    public boolean checkCard(String cardNumber, String pinCode) {
+        String sql = "SELECT * FROM cards WHERE cards.cardNumber = \'" + cardNumber + "\' AND cards.pinCode = \'" + pinCode + "\'";
 
-    public void setUsers(ArrayList<Client> users) {
-        this.users = users;
-    }
+        ResultSet resultSet = dbConnection.getData(sql);
 
-    // Getters
-    public ArrayList<Account> getAccounts() {
-        return accounts;
-    }
-
-    public ArrayList<Card> getCards() {
-        return cards;
-    }
-
-    public ArrayList<Client> getUsers() {
-        return users;
-    }
-
-    // Methods
-    boolean checkCardInfo(String cardNumber, String pinCode) {
-       for (Card card : cards) {
-           if (cardNumber.equals(card.getCardNumber()) && pinCode.equals(card.getPinCode())) {
-               return true;
-           }
-       }
-       return false;
-    }
-
-    public Card getCard(String cardNumber) {
-        for (Card card : cards) {
-            if (cardNumber.equals(card.getCardNumber())) {
-                return card;
+        try {
+            while (resultSet.next()) {
+                if (resultSet.getString("cardNumber").equals(cardNumber) && resultSet.getString("pinCode").equals(pinCode)) {
+                    return true;
+                }
             }
+        } catch (SQLException sqlE) {
+            System.out.println("ERROR!");
+            System.out.println(sqlE);
         }
-        return null;
+        return false;
     }
 
-    // BankService methods
     @Override
     public double checkBalance(String cardNumber) {
-        Card card = getCard(cardNumber);
+        String sql = "SELECT * FROM accounts, cards WHERE accounts.id = cards.accountId AND cards.cardNumber = \'" + cardNumber + "\'";
 
-        return card == null ? 0 : card.getAccount().getBalance();
+        ResultSet resultSet = dbConnection.getData(sql);
+
+        try {
+            while (resultSet.next()) {
+                    return resultSet.getDouble("balance");
+            }
+        } catch (SQLException sqlE) {
+            System.out.println("ERROR!");
+            System.out.println(sqlE);
+        }
+        return 0;
     }
 
     @Override
     public boolean withdraw(double amount, String cardNumber) {
-        Card card = getCard(cardNumber);
+        String sql = "SELECT * FROM accounts, cards WHERE accounts.id = cards.accountId AND cards.cardNumber = \'" + cardNumber + "\'";
 
-        if (card == null || card.getAccount().getBalance() - amount < 0) {
-            return false;
+        ResultSet resultSet = dbConnection.getData(sql);
+
+        try {
+            while (resultSet.next()) {
+                if (resultSet.getDouble("balance") >= amount) {
+                    String sqlUpdate = "UPDATE accounts set balance = balance - " + amount + " WHERE accounts.id = " + resultSet.getInt("accountId");
+                    dbConnection.updateData(sqlUpdate);
+                    return true;
+                }
+            }
+        } catch (SQLException sqlE) {
+            System.out.println("ERROR!");
+            System.out.println(sqlE);
         }
 
-        card.getAccount().doWithdrawBalance(amount);
-        return true;
+        return false;
     }
 
     @Override
     public boolean topUp(double amount, String cardNumber) {
-        Card card = getCard(cardNumber);
+        String sql = "SELECT * FROM accounts, cards WHERE accounts.id = cards.accountId AND cards.cardNumber = \'" + cardNumber + "\'";
 
-        if (card == null) {
-            return false;
+        ResultSet resultSet = dbConnection.getData(sql);
+
+        try {
+            while (resultSet.next()) {
+                if (resultSet.getString("cardNumber").equals(cardNumber)) {
+                    String sqlUpdate = "UPDATE accounts set balance = balance + " + amount + " WHERE accounts.id = " + resultSet.getInt("accountId");
+                    dbConnection.updateData(sqlUpdate);
+                    return true;
+                }
+            }
+        } catch (SQLException sqlE) {
+            System.out.println("ERROR!");
+            System.out.println(sqlE);
         }
 
-        card.getAccount().doTopUpBalance(amount);
-        return true;
+        return false;
     }
 
     @Override
-    public void changePinCode(Card card, String newPinCode) {
-        card.setPinCode(newPinCode);
-    }
+    public void changePinCode(String newPinCode, String cardNumber) {
+        String sql = "SELECT * FROM cards WHERE cards.cardNumber = \'" + cardNumber + "\'";
 
-    // Method toString
+        ResultSet resultSet = dbConnection.getData(sql);
 
-    @Override
-    public String toString() {
-        return "Bank [" +
-                "users=" + users +
-                ", cards=" + cards +
-                ", accounts=" + accounts +
-                " ]";
+        try {
+            while (resultSet.next()) {
+                if (resultSet.getString("cardNumber").equals(cardNumber)) {
+                    System.out.println("update pincode");
+                    String sqlUpdate = "UPDATE cards set pinCode = \'" + newPinCode +"\' WHERE cardNumber = \'" + cardNumber + "\'";
+                    dbConnection.updateData(sqlUpdate);
+                    return;
+                }
+            }
+        } catch (SQLException sqlE) {
+            System.out.println("ERROR!");
+            System.out.println(sqlE);
+        }
     }
 }

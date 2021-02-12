@@ -1,20 +1,25 @@
 package models;
 
 public class Card {
+    private Integer id;
     private String cardNumber;
     private String pinCode;
-    private Account account;
-
+    private Integer accountId;
 
     public Card() {}
 
-    public Card(String cardNumber, String pinCode, Account account) {
+    public Card(Integer id, String cardNumber, String pinCode, Integer accountId) {
+        this.id = id;
         this.cardNumber = cardNumber;
         this.pinCode = pinCode;
-        this.account = account;
+        this.accountId = accountId;
     }
 
     // Setters
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
     }
@@ -23,11 +28,15 @@ public class Card {
         this.pinCode = pinCode;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
     }
 
     // Getters
+    public Integer getId() {
+        return id;
+    }
+
     public String getCardNumber() {
         return cardNumber;
     }
@@ -36,16 +45,7 @@ public class Card {
         return pinCode;
     }
 
-    public Account getAccount() {
-        return account;
-    }
-
-    @Override
-    public String toString() {
-        return "Card [ " +
-                "cardNumber='" + cardNumber + '\'' +
-                ", pinCode='" + pinCode + '\'' +
-                ", account=" + account +
-                " ]";
+    public Integer getAccountId() {
+        return accountId;
     }
 }
